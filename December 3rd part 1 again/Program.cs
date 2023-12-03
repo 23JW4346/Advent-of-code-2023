@@ -84,7 +84,7 @@ namespace December_3rd_part_1
                 }
                 Console.WriteLine($"Sum: {result}");
             }
-            return result;
+            return sum;
         }
         static void Main()
         {
