@@ -79,5 +79,3 @@ namespace December_3rd_part_1
         }
     }
 }
-
-
