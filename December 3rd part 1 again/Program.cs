@@ -24,23 +24,6 @@ namespace December_3rd_part_1
             }
             return sum;
         }
-        static bool isDigit(char l)
-        {
-            switch (l)
-            {
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                    return true;
-                default:
-                    return false;
             }
         }
         static bool IsSymbol(char c)
