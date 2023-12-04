@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D653FAF8-87CF-4510-9330-C4BE8745EA90}</ProjectGuid>
+    <ProjectGuid>{806BBF59-166A-4C7A-91B5-40578901DAFB}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>December_3rd_part_1</RootNamespace>
-    <AssemblyName>December 3rd part 1</AssemblyName>
+    <RootNamespace>December_4th_part_1</RootNamespace>
+    <AssemblyName>December 4th part 1</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="December 3rd part 1.cs" />
+    <Compile Include="December 4th part 1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
