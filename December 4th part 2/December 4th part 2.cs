@@ -23,7 +23,7 @@ namespace December_4th_part_2
         }
         static int string_spliter(string line, int result)
         {
-            
+
             string[] split = line.Split(':')[1].Trim().Split('|');
             List<string> winnum = new List<string>(split[0].Trim().Split(' '));
             while (winnum.Contains("")) winnum.Remove("");
@@ -37,11 +37,11 @@ namespace December_4th_part_2
             int result = 0;
             string[] lines = File.ReadAllLines("input 4.txt");
             int[] totalcards = new int[lines.Length];
-            for(int i = 0; i < totalcards.Length; i++) totalcards[i] = 1;
+            for (int i = 0; i < totalcards.Length; i++) totalcards[i] = 1;
             for (int Linenumber = 0; Linenumber < lines.Length; Linenumber++)
             {
                 int match = string_spliter(lines[Linenumber], result);
-                for (int i = Linenumber+1; i <= Linenumber + match; i++)
+                for (int i = Linenumber + 1; i <= Linenumber + match; i++)
                 {
                     totalcards[i] += totalcards[Linenumber];
                 }

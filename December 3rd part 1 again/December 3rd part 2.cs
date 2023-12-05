@@ -6,81 +6,95 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
-
-class Program
+using System.Data;
+namespace December_3rd_part_2
 {
-    static void listPrint(List<int> nums)
+    class Program
     {
-        Console.Write("[");
-        foreach (int i in nums)
+        static char[,] getmap(string[] lines)
         {
-            Console.Write(i + ", ");
-        }
-        Console.WriteLine("]");
-    }
-    static List<int> GetAdjacentNumbers(string[] lines, int row, int col)
-    {
-        List<int> numbers = new List<int>();
-        int sum = 0;
-        for (int i = row - 1; i <= row + 1; i++)
-        {
-            for (int j = col - 1; j <= col + 1; j++)
+            char[,] map = new char[lines[0].Length, lines.Length];
+            for(int x = 0; x < lines[0].Length; x++)
             {
-                if (i >= 0 && i < lines.Length && j >= 0 && j < lines[i].Length &&
-                    (i != 0 || j!= 0) && char.IsNumber(lines[i][j]))
+                for (int y = 0;  y < lines.Length; y++)
                 {
-                    sum += lines[i][j];
-                    int k = 1;
-                    while (Char.IsNumber(lines[i][j]))
-                    {
-                        sum += lines[i][j + k];
-                        k++;
-                    }
-                    k = 1;
-                    while (Char.IsNumber(lines[i][j]))
-                    {
-                        sum = lines[i][j - k] + sum;
-                        k++;
-                    }
-                    numbers.Add(int.Parse(sum.ToString()));
+                    map[x, y] = lines[x][y];
                 }
             }
+            return map;
         }
-        listPrint(numbers);
-        return numbers;
-    }
-    static int CalculateGearRatios(string[] engine)
-    {
-        List<int> gearRatios = new List<int>();
-        for (int row = 0; row < engine.Length; row++)
-        {
-            for (int col = 0; col < engine[row].Length; col++)
+        static string getrestofnum(char[,] map, int x, int y)
+        {   
+            string num = map[x,y] + "";
+            int newx = x+1;
+            while (newx <= map.GetLength(0) && newx >= 0)
             {
-                if (engine[row][col] == '*')
+                while (Char.IsDigit(map[newx, y]))
                 {
-                    List<int> adjacentNumbers = GetAdjacentNumbers(engine, row, col);
-                    if (adjacentNumbers.Count == 2)
+                    num += map[newx, y];
+                    newx++;
+                    if (x >= map.GetLength(0)) break;
+                }
+                newx = x - 1;
+                while (Char.IsNumber(map[newx, y]))
+                {
+                    num = map[newx, y] + num;
+                    newx--;
+                    if (x <= 0) break;
+                }
+            }
+            return num;
+             
+        }
+        static void Main(string[] args)
+        {
+            string[] engineSchematic = File.ReadAllLines("input 3.txt");
+            char[,] map = getmap(engineSchematic);
+            bool validnum = false;
+            string number = null;
+            int sum = 0; 
+            for(int y = 0; y < map.GetLength(1); y++)
+            {
+                for(int x = 0; x < map.GetLength(0); x++)
+                {
+                    char c = map[x, y];
+                    if (c == '*')
                     {
-                        int gearRatio = 1;
-                        for (int x = 0; x < adjacentNumbers.Count; x++)
+                        number += getrestofnum(map, x, y);
+                        for(int i = -1; i <= 1; i++)
                         {
-                            gearRatio *= adjacentNumbers[x];
+                            for (int j = -1; j <= 1; j++)
+                            {
+                                int currentx = x + j;
+                                int currenty = y + i;
+                                if (currentx >= 0 && currentx <= map.GetLength(0)
+                                    && currenty >= 0 && currenty <= map.GetLength(1)
+                                    && (currentx != 0 || currenty != 0))
+                                {
+                                    if (Char.IsNumber(map[currentx, currenty]))
+                                    {
+                                        validnum = true;
+                                        number = getrestofnum(map, currentx, currenty);
+                                    }
+                                }
+                            }
                         }
-                        gearRatios.Add(gearRatio);
-                        Console.WriteLine(gearRatio);
                     }
-                    
+                    if (validnum && !Char.IsNumber(c) || (x == map.GetLength(0) && y == map.GetLength(1)))
+                    {
+                        try
+                        {
+                            sum += Int32.Parse(number);
+                        }
+                        catch
+                        {
+                            Console.WriteLine($"unable to parse '{number}'");
+                        }
+                    }
                 }
             }
+            Console.ReadKey();
         }
-        return gearRatios.Sum();
     }
-    static void Main(string[] args)
-    {
-        string[] engineSchematic = File.ReadAllLines("input 3.txt");
-        int result = CalculateGearRatios(engineSchematic);
-        Console.WriteLine(result);
-        Console.ReadKey();
-    } 
 }
 
