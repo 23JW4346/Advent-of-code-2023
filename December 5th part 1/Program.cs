@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace December_5th_part_1
 {
@@ -12,14 +13,18 @@ namespace December_5th_part_1
     {
         static List<List<long>> rangeListFinder(string[] lines, long count, long start)
         {
+            if (lines[start + 1] == " ") return null;
             List<List<long>> newlist = new List<List<long>>();
             for (long i = start + 1; i < count + start; i++)
             {
                 string[] part = lines[i].Trim().Split(' ');
-                for (long k = 0; k < 2; k++)
+                foreach (string parts in part) Console.WriteLine(parts);
+                while (part[2].Contains(' ')) part[2].Remove(' ');
+                for (long k = 0; k < part.Length; k++)
                 {
                     List<long> longs = new List<long>();
-                    for (long j = 0; j < long.Parse(part[2]); j++)
+                    long temp = long.Parse(part[2]);
+                    for (long j = 0; j < temp; j++)
                     {
                         longs.Add(long.Parse(part[k]) + j);
                     }
@@ -31,7 +36,7 @@ namespace December_5th_part_1
         static List<long> rangeFinder(string[] lines, long count, long start)
         {
             List<long> newlong = new List<long>();
-            for(long i = start+1; i < count + start; i++)
+            for (long i = start + 1; i < count + start; i++)
             {
                 string[] part = lines[i].Trim().Split(' ');
                 newlong.Add(long.Parse(part[2]));
@@ -40,7 +45,7 @@ namespace December_5th_part_1
         }
         static void Main(string[] args)
         {
-            string[] lines = File.ReadAllLines("input 5.txt");
+            string[] lines = File.ReadAllLines("test data.txt");
             string[] seeds = lines[0].Split(':')[1].Trim().Split(' ');
             long[] seednums = new long[seeds.Length];
             for(long i = 0; i < seeds.Length; i++)
@@ -53,18 +58,18 @@ namespace December_5th_part_1
             List<List<long>> ranges = new List<List<long>>();
             for (long i = 2; i < lines.Length; i++)
             {
-                if (lines[i] == "\n")
+                if (lines[i] == "")
                 {
                     lists.Add(rangeListFinder(lines, count, startline));
                     ranges.Add(rangeFinder(lines, count, startline));
-                    startline = count + 1;
+                    startline += count+1;
                     count = 0;
                 }
                 else count++;
             }
             List<long> locationnums = new List<long>();
             locationnums.Add(0);
-            for (int j = 0; j <= 42; j++)
+            for (int j = 0; j < ranges[0].Count; j++)
             {
                 for (long i = 0; i < seeds.Length; i++)
                 {
