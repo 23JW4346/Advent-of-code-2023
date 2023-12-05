@@ -6,93 +6,75 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
+using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
 
 namespace December_5th_part_1
 {
     internal class Program
     {
-        static List<List<long>> rangeListFinder(string[] lines, long count, long start)
+        static List<List<long>> rangeListFinder(List<string> lines)
         {
-            if (lines[start + 1] == " ") return null;
+
             List<List<long>> newlist = new List<List<long>>();
-            for (long i = start + 1; i < count + start; i++)
+            Regex rg = new Regex("[0-9]+\\s");
+            string input = null;
+            foreach (string line in lines)
             {
-                string[] part = lines[i].Trim().Split(' ');
-                foreach (string parts in part) Console.WriteLine(parts);
-                while (part[2].Contains(' ')) part[2].Remove(' ');
-                for (long k = 0; k < part.Length; k++)
-                {
-                    List<long> longs = new List<long>();
-                    long temp = long.Parse(part[2]);
-                    for (long j = 0; j < temp; j++)
-                    {
-                        longs.Add(long.Parse(part[k]) + j);
-                    }
-                    newlist.Add(longs);
-                }
+                input += line;
+                input += " ";
             }
-            return newlist;
-        }           
-        static List<long> rangeFinder(string[] lines, long count, long start)
-        {
-            List<long> newlong = new List<long>();
-            for (long i = start + 1; i < count + start; i++)
+            MatchCollection allmatches = rg.Matches(input);
+            for (int i = 0; i < allmatches.Count; i += 3)
             {
-                string[] part = lines[i].Trim().Split(' ');
-                newlong.Add(long.Parse(part[2]));
+                List<long> temp = new List<long> { long.Parse(allmatches[i].ToString()), long.Parse(allmatches[i + 1].ToString()), long.Parse(allmatches[i + 2].ToString()) };
+                newlist.Add(temp);
             }
-            return newlong;
+            return 
+                newlist;
         }
         static void Main(string[] args)
         {
-            string[] lines = File.ReadAllLines("test data.txt");
+            string[] lines = File.ReadAllLines("input 5.txt");
             string[] seeds = lines[0].Split(':')[1].Trim().Split(' ');
+            List<string> map = new List<string>();
+            List<List<List<long>>> lists = new List<List<List<long>>>();
+            for (int linenumber = 0; linenumber < lines.Length; linenumber++)
+            {
+                if (!(lines[linenumber].StartsWith("seeds: ")))
+                {
+                    map.Add(lines[linenumber]);
+                }
+                if ((lines[linenumber]) == "" && (linenumber != 1 || linenumber == lines.Length - 1))
+                {
+                    lists.Add(rangeListFinder(map));
+                    map.Clear();
+                }
+            }
             long[] seednums = new long[seeds.Length];
-            for(long i = 0; i < seeds.Length; i++)
+            List<long> answers = new List<long>();
+            for (long i = 0; i < seeds.Length; i++)
             {
                 seednums[i] = long.Parse(seeds[i]);
             }
-            long startline = 2;
-            long count = 0;
-            List<List<List<long>>> lists = new List<List<List<long>>>();
-            List<List<long>> ranges = new List<List<long>>();
-            for (long i = 2; i < lines.Length; i++)
+            foreach (long seed in seednums)
             {
-                if (lines[i] == "")
+                long Location = seed;
+                foreach (List<List<long>> list in lists)
                 {
-                    lists.Add(rangeListFinder(lines, count, startline));
-                    ranges.Add(rangeFinder(lines, count, startline));
-                    startline += count+1;
-                    count = 0;
-                }
-                else count++;
-            }
-            List<long> locationnums = new List<long>();
-            locationnums.Add(0);
-            for (int j = 0; j < ranges[0].Count; j++)
-            {
-                for (long i = 0; i < seeds.Length; i++)
-                {
-                    long temp = seednums[i] - ranges[0][j];
-                    if (lists[0][0].Contains(seednums[i]))
+                    foreach (List<long> points in list)
                     {
-                        if (locationnums[0] == 0)
+                        if (Location >= points[1] && Location < (points[1] + points[2]))
                         {
-                            locationnums[0] = temp;
-                        }
-                        else if (temp < locationnums[0])
-                        {
-                            locationnums[0] = temp;
+                            Location += points[0] - points[1];
+                            Console.Write($"({points[0]}, {points[1]}, {points[2]}): {Location} \n");
+                            break;
                         }
                     }
-                } 
+                }
+                answers.Add(Location);
             }
-            for(long i = 1; i < lists.Count; i++)
-            {
-
-            }
-            locationnums.Sort();
-            Console.WriteLine(locationnums[0]);
+            Console.WriteLine($"Answer: {answers.Min()}");
             Console.ReadKey();
         }
     }
